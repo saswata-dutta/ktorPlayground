@@ -1,7 +1,7 @@
 package com.sas.routes
 
+import com.sas.database.DdbProvider
 import com.sas.models.Customer
-import com.sas.service.CustomerService
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -14,12 +14,12 @@ fun Route.customerRouting() {
             val id = call.parameters["id"] ?: return@get call.respond(
                 mapOf("ERROR" to "Missing id")
             )
-            call.respond(mapOf("DATA" to CustomerService.get(id)))
+            call.respond(mapOf("DATA" to DdbProvider.getItem(id, Customer::class)))
         }
 
         post {
             val customer = call.receive<Customer>()
-            CustomerService.save(customer)
+            DdbProvider.putItem(customer, Customer::class)
             call.respond(mapOf("DATA" to customer))
         }
 
